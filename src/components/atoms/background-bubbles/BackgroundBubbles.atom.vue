@@ -17,15 +17,16 @@
             <!-- El fondo del input que reacciona con las burbujas -->
             <div class="background-bubbles__shape"></div>
             
-            <!-- Generamos 20 burbujas dinámicamente -->
             <div 
                 v-for="bubble in bubbles" 
                 :key="bubble.id"
                 :style="{ 
-                    transform: `translate(${bubble.x}px, ${bubble.y}px)`,
+                    transform: `translate3d(${bubble.x}px, ${bubble.y}px, 0)`,
                     width: bubble.size + 'px',
                     height: bubble.size + 'px',
-                    backgroundColor: bubble.color
+                    background: `radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.1) 30%, ${bubble.color} 60%, ${bubble.color} 100%)`,
+                    opacity: 0.7,
+                    mixBlendMode: 'multiply'
                 }"
                 class="background-bubbles__blob"
             ></div>
@@ -73,7 +74,7 @@ const container = ref<HTMLElement>();
 const model = ref('');
 const isActive = ref(false);
 const bubbles = ref<Bubble[]>([]);
-const animationId = ref<number>();
+let animationId: number | null = null;
 
 const interpolateColor = (speed: number, minSpeed: number, maxSpeed: number): string => {
     // Normalizar velocidad entre 0 y 1
@@ -99,11 +100,11 @@ const initBubbles = () => {
     
     // Detectar si es móvil basado en el ancho del contenedor
     const isMobile = width < 768;
-    const bubbleCount = isMobile ? 15 : 40; // 15 burbujas en móvil, 40 en desktop
+    const bubbleCount = isMobile ? 12 : 25; // Reducido para mejor rendimiento
     
     // Tamaño de burbujas proporcional al ancho del contenedor
-    const minSizePercent = isMobile ? 0.10 : 0.05; // 10% en móvil, 5% en desktop
-    const maxSizePercent = isMobile ? 0.25 : 0.15; // 25% en móvil, 15% en desktop
+    const minSizePercent = isMobile ? 0.12 : 0.06; // Aumentado ligeramente
+    const maxSizePercent = isMobile ? 0.28 : 0.18;
     const minSize = width * minSizePercent;
     const maxSize = width * maxSizePercent;
     
@@ -113,7 +114,7 @@ const initBubbles = () => {
         const x = Math.random() * (width - size);
         const y = Math.random() * (height - size);
         const angle = Math.random() * 2 * Math.PI;
-        const speed = Math.random() * 1 + 0.005;
+        const speed = Math.random() * 0.5 + 0.2; // Velocidad más baja para mejor rendimiento
         const vx = Math.cos(angle) * speed;
         const vy = Math.sin(angle) * speed;
 
@@ -128,13 +129,14 @@ const initBubbles = () => {
         });
     }
     
-    // Segunda pasada: calcular velocidades y asignar colores
+    // Segunda pasada: calcular colores basados en velocidad
     const speeds = tempBubbles.map(b => Math.sqrt(b.vx * b.vx + b.vy * b.vy));
     const minSpeed = Math.min(...speeds);
     const maxSpeed = Math.max(...speeds);
     
-    tempBubbles.forEach((bubble, index) => {
-        bubble.color = interpolateColor(speeds[index], minSpeed, maxSpeed);
+    tempBubbles.forEach((bubble) => {
+        const speed = Math.sqrt(bubble.vx * bubble.vx + bubble.vy * bubble.vy);
+        bubble.color = interpolateColor(speed, minSpeed, maxSpeed);
     });
     
     bubbles.value = tempBubbles;
@@ -142,36 +144,29 @@ const initBubbles = () => {
 
 const animate = () => {
     if (!container.value) return;
+    
     const rect = container.value.getBoundingClientRect();
     const width = rect.width;
     const height = rect.height;
-
+    
     bubbles.value.forEach(bubble => {
+        // Actualizar posición
         bubble.x += bubble.vx;
         bubble.y += bubble.vy;
-
-        const halfSize = bubble.size / 2;
-        const padding = 2; // Pequeño padding para evitar temblor
-
-        // Rebote en bordes (considerando la mitad de la bola)
-        if (bubble.x <= -halfSize) {
-            bubble.vx = Math.abs(bubble.vx); // Asegurar que va hacia adelante
-            bubble.x = -halfSize + padding;
-        } else if (bubble.x >= width - halfSize) {
-            bubble.vx = -Math.abs(bubble.vx); // Asegurar que va hacia atrás
-            bubble.x = width - halfSize - padding;
-        }
         
-        if (bubble.y <= -halfSize) {
-            bubble.vy = Math.abs(bubble.vy); // Asegurar que va hacia abajo
-            bubble.y = -halfSize + padding;
-        } else if (bubble.y >= height - halfSize) {
-            bubble.vy = -Math.abs(bubble.vy); // Asegurar que va hacia arriba
-            bubble.y = height - halfSize - padding;
+        // Colisión con bordes (rebote)
+        if (bubble.x <= 0 || bubble.x + bubble.size >= width) {
+            bubble.vx *= -1;
+            bubble.x = Math.max(0, Math.min(bubble.x, width - bubble.size));
+        }
+        if (bubble.y <= 0 || bubble.y + bubble.size >= height) {
+            bubble.vy *= -1;
+            bubble.y = Math.max(0, Math.min(bubble.y, height - bubble.size));
         }
     });
-
-    animationId.value = requestAnimationFrame(animate);
+    
+    // Continuar animación
+    animationId = requestAnimationFrame(animate);
 };
 
 const onInput = () => {
@@ -188,7 +183,11 @@ const onBlur = () => {
 
 onMounted(() => {
     initBubbles();
-    animate();
+    
+    // Iniciar animación
+    if (!animationId) {
+        animate();
+    }
     
     // Escuchar cambios de tamaño de ventana para recalcular burbujas
     window.addEventListener('resize', () => {
@@ -197,9 +196,12 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-    if (animationId.value) {
-        cancelAnimationFrame(animationId.value);
+    // Detener animación
+    if (animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
     }
+    
     window.removeEventListener('resize', initBubbles);
 });
 </script>
