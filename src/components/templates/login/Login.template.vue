@@ -1,11 +1,7 @@
 <template>
     <main class="login__wrapper">
-        <header class="login__wrapper__header">
-            <h1 style="color:white;font-size: 24px;font-weight: lighter;">
-             Andres Diaz Castillo   </h1>
-        </header>
         <article
-            class='login__wrapper__content '>hhh
+            class='login__wrapper__content '>
            <BackgroundBubblesAtom/>
         </article>
     </main>

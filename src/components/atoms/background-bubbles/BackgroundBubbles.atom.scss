@@ -1,107 +1,99 @@
-  // VARIABLES (Ajusta los colores según tu paleta)
-$color-blob-primary: #006cd8; // Tu azul principal
-$color-blob-secondary: #4da6ff; // Un azul más claro para dar profundidad
+// VARIABLES
+$color-lava: #006cd8; // El color del input y las burbujas
+$input-width: 100vw;
+$input-height: 50px;
 
-.lava-background {
-    // Abarca todo el contenedor padre
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    z-index: 0; // Se queda al fondo
-    background-color: #f4f7fa; // Color de fondo base
+.background-bubbles {
+    position: relative;
+    width: $input-width;
+    height: 100vh; // Altura del contenedor para que las burbujas tengan espacio para flotar
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden; // Corta las burbujas si se salen de la caja
 
     &__filter {
-        display: none; // El SVG en sí no debe verse, solo se usa su ID
+        display: none;
+        position: absolute;
     }
 
-    &__blobs-container {
-        width: 100%;
-        height: 100%;
+    // ==========================================
+    // CAPA VISUAL (Efecto pegajoso)
+    // ==========================================
+    &__gooey-layer {
         position: absolute;
         top: 0;
         left: 0;
-        // AQUÍ OCURRE LA MAGIA: Aplica el filtro SVG a los elementos internos
-        filter: url('#gooey-effect');
+        width: 100%;
+        height: 100%;
+        filter: url('#gooey-input'); // Aplica el SVG
+        pointer-events: none; // Evita que bloquee los clics al input
+        z-index: 1;
     }
 
+    // El "falso" input visual
+    &__shape {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 11rem;
+        height: $input-height;
+        background-color: $color-lava;
+        background-color: #00baf6;
+        border-radius: 20px; // Input redondeado (tipo píldora)
+    }
+
+    // Bordes invisibles arriba y abajo para que las burbujas se "peguen" al límite y desaparezcan
+    &__edge {
+        position: absolute;
+        left: 0;
+        width: 100%;
+        height: 20px;
+        background-color: $color-lava;
+        
+        &--top { top: -23px; }
+        &--bottom { bottom: -23px; }
+    }
+
+    // ==========================================
+    // BURBUJAS (Ahora generadas dinámicamente con JS)
+    // ==========================================
     &__blob {
         position: absolute;
+        background-color: $color-lava;
         border-radius: 50%;
-        background-color: $color-blob-primary;
-        opacity: 0.7;
-
-        // Burbuja 1: Sube y baja por la izquierda
-        &--1 {
-            width: 250px;
-            height: 250px;
-            left: 10%;
-            bottom: -50px;
-            animation: float-up 12s infinite ease-in-out alternate;
-        }
-
-        // Burbuja 2: Baja desde arriba en el centro
-        &--2 {
-            width: 350px;
-            height: 350px;
-            left: 40%;
-            top: -100px;
-            background-color: $color-blob-secondary;
-            animation: float-down 16s infinite ease-in-out alternate;
-        }
-
-        // Burbuja 3: Sube por la derecha
-        &--3 {
-            width: 200px;
-            height: 200px;
-            right: 15%;
-            bottom: -100px;
-            animation: float-up 18s infinite ease-in-out alternate-reverse;
-        }
-
-        // Burbuja 4: Se mueve en diagonal
-        &--4 {
-            width: 180px;
-            height: 180px;
-            right: 30%;
-            top: 20%;
-            animation: float-diagonal 22s infinite ease-in-out alternate;
-        }
-
-        // Burbuja 5: Burbuja pequeña flotando rápido
-        &--5 {
-            width: 120px;
-            height: 120px;
-            left: 25%;
-            bottom: 30%;
-            background-color: $color-blob-secondary;
-            animation: float-diagonal-reverse 14s infinite ease-in-out alternate;
-        }
     }
-}
 
-// ==========================================
-// KEYFRAMES (Animaciones de las burbujas)
-// ==========================================
+    // ==========================================
+    // CAPA INTERACTIVA (El Input Real)
+    // ==========================================
+    &__field {
+        z-index: 2; // Por encima de la lava
+        width: 10rem;
+        height: $input-height;
+        background: transparent; // Transparente para ver la lava detrás
+        border: none;
+        outline: none;
+        color: white; // Texto blanco para contrastar con el azul
+        font-size: 1rem;
+        font-weight: bolder;
+        font-family: 'Poppins', sans-serif;
+        padding: 0 1.5rem;
+        box-sizing: border-box;
+        text-align: center;
+        background-color: #00baf6;
+        &::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+           position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        height: $input-height;
+        background-color: $color-lava;
+        border-radius:10px; // Input redondeado (tipo píldora)
+    }
 
-@keyframes float-up {
-    0% { transform: translateY(0) scale(1); }
-    100% { transform: translateY(-80vh) scale(1.2); }
-}
 
-@keyframes float-down {
-    0% { transform: translateY(0) scale(1); }
-    100% { transform: translateY(80vh) scale(0.9); }
-}
-
-@keyframes float-diagonal {
-    0% { transform: translate(0, 0) scale(1); }
-    100% { transform: translate(-30vw, 40vh) scale(1.1); }
-}
-
-@keyframes float-diagonal-reverse {
-    0% { transform: translate(0, 0) scale(1); }
-    100% { transform: translate(40vw, -30vh) scale(0.8); }
 }

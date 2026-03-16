@@ -3,7 +3,7 @@
     width: 100vw;
     height: 100vh;
     overflow: hidden;
-    background-color: $bg-gray;
+    // background-color: $bg-gray;
 // Un color de respaldo por si acaso
 
     // Esta es la capa que envuelve tu texto y tu formulario
@@ -27,13 +27,11 @@
 
     &__content {
         // Efecto Glassmorphism (Cristal) para que las burbujas se vean borrosas por detrás del form
-        background: rgba(255, 255, 255, 0.75); 
         backdrop-filter: blur(12px); 
         -webkit-backdrop-filter: blur(12px);
         
         border: 1px solid rgba(255, 255, 255, 0.3);
         border-radius: 16px; // Bordes redondeados suaves
-        padding: 2.5rem;
         box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
         
         width: 100vw;
