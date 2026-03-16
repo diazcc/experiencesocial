@@ -29,7 +29,7 @@
         // Efecto Glassmorphism (Cristal) para que las burbujas se vean borrosas por detrás del form
         backdrop-filter: blur(12px); 
         -webkit-backdrop-filter: blur(12px);
-        
+        background-color:#a7ffce;
         border: 1px solid rgba(255, 255, 255, 0.3);
         border-radius: 16px; // Bordes redondeados suaves
         box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);

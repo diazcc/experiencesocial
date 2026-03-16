@@ -1,5 +1,5 @@
 // VARIABLES
-$color-lava: #006cd8; // El color del input y las burbujas
+$color-lava: #00B24D; // Verde Frutiger Aero para las burbujas
 $input-width: 100vw;
 $input-height: 50px;
 
@@ -40,7 +40,7 @@ $input-height: 50px;
         width: 11rem;
         height: $input-height;
         background-color: $color-lava;
-        background-color: #00baf6;
+        background-color: #2bd36ecb;
         border-radius: 20px; // Input redondeado (tipo píldora)
     }
 
@@ -82,7 +82,7 @@ $input-height: 50px;
         padding: 0 1.5rem;
         box-sizing: border-box;
         text-align: center;
-        background-color: #00baf6;
+        background-color: #2bd36d;
         &::placeholder {
             color: rgba(255, 255, 255, 0.7);
         }
@@ -91,7 +91,6 @@ $input-height: 50px;
         left: 50%;
         transform: translate(-50%, -50%);
         height: $input-height;
-        background-color: $color-lava;
         border-radius:10px; // Input redondeado (tipo píldora)
     }
 

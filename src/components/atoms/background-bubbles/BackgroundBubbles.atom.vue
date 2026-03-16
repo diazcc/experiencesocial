@@ -79,11 +79,11 @@ const interpolateColor = (speed: number, minSpeed: number, maxSpeed: number): st
     // Normalizar velocidad entre 0 y 1
     const normalized = (speed - minSpeed) / (maxSpeed - minSpeed);
     
-    // Color oscuro (lento): #006cd8 (0, 108, 216)
-    // Color claro (rápido): #00d4ff (0, 212, 255)
-    const r = Math.round(0 + (0 - 0) * normalized);
-    const g = Math.round(108 + (212 - 108) * normalized);
-    const b = Math.round(216 + (255 - 216) * normalized);
+    // Color oscuro (lento): Verde Frutiger Aero oscuro #00B24D (0, 178, 77)
+    // Color claro (rápido): Verde Frutiger Aero brillante #66FF99 (102, 255, 153)
+    const r = Math.round(0 + (102 - 0) * normalized);
+    const g = Math.round(178 + (255 - 178) * normalized);
+    const b = Math.round(77 + (153 - 77) * normalized);
     
     return `rgb(${r}, ${g}, ${b})`;
 };
@@ -98,8 +98,8 @@ const initBubbles = () => {
     const tempBubbles: Bubble[] = [];
     
     // Primera pasada: crear burbujas con velocidades
-    for (let i = 0; i < 40; i++) {
-        const size = Math.random() * 60 + 30;
+    for (let i = 0; i < 30; i++) {
+        const size = Math.random() * 200 + 30;
         const x = Math.random() * (width - size);
         const y = Math.random() * (height - size);
         const angle = Math.random() * 2 * Math.PI;
