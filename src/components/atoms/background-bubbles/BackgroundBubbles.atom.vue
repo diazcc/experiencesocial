@@ -97,9 +97,19 @@ const initBubbles = () => {
     bubbles.value = [];
     const tempBubbles: Bubble[] = [];
     
+    // Detectar si es móvil basado en el ancho del contenedor
+    const isMobile = width < 768;
+    const bubbleCount = isMobile ? 15 : 40; // 15 burbujas en móvil, 40 en desktop
+    
+    // Tamaño de burbujas proporcional al ancho del contenedor
+    const minSizePercent = isMobile ? 0.10 : 0.05; // 10% en móvil, 5% en desktop
+    const maxSizePercent = isMobile ? 0.25 : 0.15; // 25% en móvil, 15% en desktop
+    const minSize = width * minSizePercent;
+    const maxSize = width * maxSizePercent;
+    
     // Primera pasada: crear burbujas con velocidades
-    for (let i = 0; i < 30; i++) {
-        const size = Math.random() * 200 + 30;
+    for (let i = 0; i < bubbleCount; i++) {
+        const size = Math.random() * (maxSize - minSize) + minSize;
         const x = Math.random() * (width - size);
         const y = Math.random() * (height - size);
         const angle = Math.random() * 2 * Math.PI;
@@ -114,7 +124,7 @@ const initBubbles = () => {
             vx,
             vy,
             size,
-            color: '#006cd8' // Color temporal
+            color: '#00B24D' // Color temporal
         });
     }
     
@@ -179,12 +189,18 @@ const onBlur = () => {
 onMounted(() => {
     initBubbles();
     animate();
+    
+    // Escuchar cambios de tamaño de ventana para recalcular burbujas
+    window.addEventListener('resize', () => {
+        initBubbles();
+    });
 });
 
 onUnmounted(() => {
     if (animationId.value) {
         cancelAnimationFrame(animationId.value);
     }
+    window.removeEventListener('resize', initBubbles);
 });
 </script>
 <style scoped src="./BackgroundBubbles.atom.scss" lang="scss">
